@@ -16,21 +16,25 @@ router.post("/classify", async function (req, res, next) {
     },
   };
 
-  client.detectLabels(params, function (err, response) {
-    if (err) {
-      res.status(err.statusCode).json({ error: err.message });
-    } else {
-      let resultLables = [];
+  try {
+    client.detectLabels(params, function (err, response) {
+      if (err) {
+        res.status(err.statusCode).json({ error: err.message });
+      } else {
+        let resultLables = [];
 
-      response?.Labels.forEach((label) => {
-        resultLables.push(label?.Name);
-      });
+        response?.Labels.forEach((label) => {
+          resultLables.push(label?.Name);
+        });
 
-      res.status(200).json({
-        labels: resultLables,
-      });
-    }
-  });
+        res.status(200).json({
+          labels: resultLables,
+        });
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Unexpected Internal Server Error! Please try again" });
+  }
 });
 
 module.exports = router;
